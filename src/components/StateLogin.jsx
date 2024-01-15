@@ -8,6 +8,14 @@ export default function Login() {
     password: "",
   });
 
+  const [didEdit, setdidEdit] = useState({
+    email: false,
+    password: false,
+  });
+
+  // we can validate while typing and also when the focus is off
+  const emailIsInvalid = didEdit.email && !enteredValues.email.includes("@");
+
   function handleSubmit(event) {
     event.preventDefault(); //prevents from sedning http request to the server.
     console.log(enteredValues);
@@ -15,6 +23,17 @@ export default function Login() {
 
   function handleInputChange(identifier, value) {
     setEnteredValues((preValues) => ({ ...preValues, [identifier]: value }));
+    setdidEdit((prevEdit) => ({
+      ...prevEdit,
+      [identifier]: false,
+    }));
+  }
+
+  function handleInputBlur(identifier) {
+    setdidEdit((prevEdit) => ({
+      ...prevEdit,
+      [identifier]: true,
+    }));
   }
 
   // function handleEmailChange(event) {
@@ -36,9 +55,13 @@ export default function Login() {
             id="email"
             type="email"
             name="email"
+            onBlur={() => handleInputBlur("email")}
             onChange={(event) => handleInputChange("email", event.target.value)}
             value={enteredValues.email}
           />
+          <div className="control-error">
+            {emailIsInvalid && <p>Please enter a valid email</p>}
+          </div>
         </div>
 
         <div className="control no-margin">
